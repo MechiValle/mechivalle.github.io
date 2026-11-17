@@ -15,15 +15,12 @@
         </a>
         <nav aria-label="Sections">
           <ol class="toc">
-            <li><a href="#inspector">Inspector</a></li>
             <li><a href="#ga4">Google Analytics 4</a></li>
             <li><a href="#gtm">Google Tag Manager</a></li>
             <li><a href="#meta-pixel">Meta Pixel</a></li>
             <li><a href="#youtube">YouTube</a></li>
             <li><a href="#maps">Google Maps</a></li>
             <li><a href="#vimeo">Vimeo</a></li>
-            <li><a href="#hotjar">Hotjar</a></li>
-            <li><a href="#linkedin">LinkedIn Insight</a></li>
           </ol>
         </nav>
       </aside>
@@ -38,11 +35,6 @@
           </p>
         </header>
 
-        <section class="inspector" id="inspector">
-          <h2 class="section-title">Inspector</h2>
-          <div class="slot">Cookie, storage and event inspector.</div>
-        </section>
-
         <section class="service" id="ga4" data-service="Google Analytics 4">
           <header class="service-head">
             <h2>Google Analytics 4</h2>
@@ -56,7 +48,7 @@
           <script
             id="ga4-loader"
             async
-            src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
+            src="https://www.googletagmanager.com/gtag/js?id=G-EPPFS2MB4T"
           ></script>
           <script>
             window.dataLayer = window.dataLayer || [];
@@ -64,7 +56,7 @@
               dataLayer.push(arguments);
             }
             gtag("js", new Date());
-            gtag("config", "G-XXXXXXXXXX");
+            gtag("config", "G-EPPFS2MB4T");
           </script>
 
           <div class="slot">
@@ -101,7 +93,7 @@
               j.async = true;
               j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
               f.parentNode.insertBefore(j, f);
-            })(window, document, "script", "dataLayer", "GTM-XXXXXXX");
+            })(window, document, "script", "dataLayer", "GTM-KQZJZWGF");
           </script>
 
           <div class="slot">
@@ -149,7 +141,7 @@
               "script",
               "https://connect.facebook.net/en_US/fbevents.js",
             );
-            fbq("init", "YOUR_PIXEL_ID");
+            fbq("init", "2659383417866615");
             fbq("track", "PageView");
           </script>
 
@@ -252,107 +244,6 @@
             <dd>Cookies and local storage on <code>vimeo.com</code></dd>
             <dt>Requests</dt>
             <dd><code>player.vimeo.com/video</code></dd>
-          </dl>
-        </section>
-
-        <section class="service" id="hotjar" data-service="Hotjar">
-          <header class="service-head">
-            <h2>Hotjar</h2>
-            <span class="status" data-status="idle">Not loaded</span>
-          </header>
-          <p class="service-desc">
-            Session recording and heatmaps. Writes a lot of cookies and storage
-            entries.
-          </p>
-
-          <script id="hotjar-snippet">
-            (function (h, o, t, j, a, r) {
-              h.hj =
-                h.hj ||
-                function () {
-                  (h.hj.q = h.hj.q || []).push(arguments);
-                };
-              h._hjSettings = { hjid: 0o0, hjsv: 6 };
-              a = o.getElementsByTagName("head")[0];
-              r = o.createElement("script");
-              r.async = 1;
-              r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
-              a.appendChild(r);
-            })(
-              window,
-              document,
-              "https://static.hotjar.com/c/hotjar-",
-              ".js?sv=",
-            );
-          </script>
-
-          <div class="slot">
-            No visible output. Filter the Network tab by "hotjar".
-          </div>
-          <dl class="look-for">
-            <dt>Cookies</dt>
-            <dd>
-              <code>_hjSessionUser_&lt;ID&gt;</code>,
-              <code>_hjSession_&lt;ID&gt;</code>
-            </dd>
-            <dt>Requests</dt>
-            <dd>
-              <code>static.hotjar.com</code>, <code>script.hotjar.com</code>
-            </dd>
-          </dl>
-        </section>
-
-        <section
-          class="service"
-          id="linkedin"
-          data-service="LinkedIn Insight Tag"
-        >
-          <header class="service-head">
-            <h2>LinkedIn Insight Tag</h2>
-            <span class="status" data-status="idle">Not loaded</span>
-          </header>
-          <p class="service-desc">
-            Conversion tracking pixel. Sets third-party cookies on LinkedIn's
-            domain.
-          </p>
-
-          <script id="linkedin-config">
-            _linkedin_partner_id = "0000000";
-            window._linkedin_data_partner_ids =
-              window._linkedin_data_partner_ids || [];
-            window._linkedin_data_partner_ids.push(_linkedin_partner_id);
-          </script>
-          <script id="linkedin-loader">
-            (function (l) {
-              if (!l) {
-                window.lintrk = function (a, b) {
-                  window.lintrk.q.push([a, b]);
-                };
-                window.lintrk.q = [];
-              }
-              var s = document.getElementsByTagName("script")[0];
-              var b = document.createElement("script");
-              b.type = "text/javascript";
-              b.async = true;
-              b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
-              s.parentNode.insertBefore(b, s);
-            })(window.lintrk);
-          </script>
-
-          <div class="slot">
-            No visible output. Filter the Network tab by "licdn".
-          </div>
-          <dl class="look-for">
-            <dt>Cookies</dt>
-            <dd>
-              Third-party, set on <code>linkedin.com</code> (for example
-              <code>bcookie</code>)
-            </dd>
-            <dt>Requests</dt>
-            <dd>
-              <code>snap.licdn.com/.../insight.min.js</code>,
-              <code>px.ads.linkedin.com</code>
-            </dd>
           </dl>
         </section>
 

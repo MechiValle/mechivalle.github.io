@@ -33,8 +33,6 @@ const checks: Record<string, () => Status> = {
   youtube: () => frameStatus("#youtube-frame"),
   maps: () => frameStatus("#maps-frame"),
   vimeo: () => frameStatus("#vimeo-frame"),
-  hotjar: () => scriptStatus("#hotjar-snippet", "static.hotjar.com"),
-  linkedin: () => scriptStatus("#linkedin-loader", "snap.licdn.com"),
 };
 
 function render(): void {
