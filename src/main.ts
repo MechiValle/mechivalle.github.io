@@ -58,5 +58,3 @@ new MutationObserver(() => render()).observe(document.documentElement, {
   attributes: true,
   attributeFilter: ["src", "type"],
 });
-
-console.log("usertesting: ready");
