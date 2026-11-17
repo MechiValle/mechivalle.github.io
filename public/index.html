@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>usertesting · consent test bench</title>
+    <link rel="stylesheet" href="styles/main.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <a class="brand" href="#top">
+          <span class="brand-name">usertesting</span>
+          <span class="brand-sub">Consent test bench</span>
+        </a>
+        <nav aria-label="Sections">
+          <ol class="toc">
+            <li><a href="#inspector">Inspector</a></li>
+            <li><a href="#ga4">Google Analytics 4</a></li>
+            <li><a href="#gtm">Google Tag Manager</a></li>
+            <li><a href="#meta-pixel">Meta Pixel</a></li>
+            <li><a href="#youtube">YouTube</a></li>
+            <li><a href="#maps">Google Maps</a></li>
+            <li><a href="#vimeo">Vimeo</a></li>
+            <li><a href="#hotjar">Hotjar</a></li>
+            <li><a href="#linkedin">LinkedIn Insight</a></li>
+          </ol>
+        </nav>
+      </aside>
+
+      <main class="content" id="top">
+        <header class="page-head">
+          <h1>Consent test bench</h1>
+          <p class="lede">
+            One section per third-party service. Open DevTools (Network,
+            Application, Console), switch consent on and off in the banner, and
+            watch what loads, what is blocked and what gets written to storage.
+          </p>
+        </header>
+
+        <section class="inspector" id="inspector">
+          <h2 class="section-title">Inspector</h2>
+          <div class="slot">Cookie, storage and event inspector.</div>
+        </section>
+
+        <section class="service" id="ga4" data-service="Google Analytics 4">
+          <header class="service-head">
+            <h2>Google Analytics 4</h2>
+            <span class="status" data-status="idle">Not loaded</span>
+          </header>
+          <p class="service-desc">
+            Page-view and event measurement. The classic first-party cookie
+            case.
+          </p>
+
+          <script
+            id="ga4-loader"
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
+          ></script>
+          <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+              dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-XXXXXXXXXX");
+          </script>
+
+          <div class="slot">
+            No visible output. Filter the Network tab by "collect".
+          </div>
+          <dl class="look-for">
+            <dt>Cookies</dt>
+            <dd><code>_ga</code>, <code>_ga_&lt;MEASUREMENT_ID&gt;</code></dd>
+            <dt>Requests</dt>
+            <dd>
+              <code>googletagmanager.com/gtag/js</code>,
+              <code>google-analytics.com/g/collect</code>
+            </dd>
+          </dl>
+        </section>
+
+        <section class="service" id="gtm" data-service="Google Tag Manager">
+          <header class="service-head">
+            <h2>Google Tag Manager</h2>
+            <span class="status" data-status="idle">Not loaded</span>
+          </header>
+          <p class="service-desc">
+            A container that loads other tags. Useful to see how blocking one
+            script cascades into everything it would have loaded.
+          </p>
+
+          <script id="gtm-snippet">
+            (function (w, d, s, l, i) {
+              w[l] = w[l] || [];
+              w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+              var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s),
+                dl = l != "dataLayer" ? "&l=" + l : "";
+              j.async = true;
+              j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+              f.parentNode.insertBefore(j, f);
+            })(window, document, "script", "dataLayer", "GTM-XXXXXXX");
+          </script>
+
+          <div class="slot">
+            No visible output. Filter the Network tab by "gtm".
+          </div>
+          <dl class="look-for">
+            <dt>Cookies</dt>
+            <dd>None by itself. Depends on the tags inside the container.</dd>
+            <dt>Requests</dt>
+            <dd><code>googletagmanager.com/gtm.js</code></dd>
+          </dl>
+        </section>
+
+        <section class="service" id="meta-pixel" data-service="Meta Pixel">
+          <header class="service-head">
+            <h2>Meta Pixel</h2>
+            <span class="status" data-status="idle">Not loaded</span>
+          </header>
+          <p class="service-desc">
+            Advertising pixel. Loads a script, then reports page views back to
+            Meta.
+          </p>
+
+          <script id="meta-pixel-snippet">
+            !(function (f, b, e, v, n, t, s) {
+              if (f.fbq) return;
+              n = f.fbq = function () {
+                n.callMethod
+                  ? n.callMethod.apply(n, arguments)
+                  : n.queue.push(arguments);
+              };
+              if (!f._fbq) f._fbq = n;
+              n.push = n;
+              n.loaded = !0;
+              n.version = "2.0";
+              n.queue = [];
+              t = b.createElement(e);
+              t.async = !0;
+              t.src = v;
+              s = b.getElementsByTagName(e)[0];
+              s.parentNode.insertBefore(t, s);
+            })(
+              window,
+              document,
+              "script",
+              "https://connect.facebook.net/en_US/fbevents.js",
+            );
+            fbq("init", "YOUR_PIXEL_ID");
+            fbq("track", "PageView");
+          </script>
+
+          <div class="slot">
+            No visible output. Filter the Network tab by "facebook".
+          </div>
+          <dl class="look-for">
+            <dt>Cookies</dt>
+            <dd><code>_fbp</code></dd>
+            <dt>Requests</dt>
+            <dd>
+              <code>connect.facebook.net/.../fbevents.js</code>,
+              <code>facebook.com/tr</code>
+            </dd>
+          </dl>
+        </section>
+
+        <section class="service" id="youtube" data-service="YouTube">
+          <header class="service-head">
+            <h2>YouTube</h2>
+            <span class="status" data-status="idle">Not loaded</span>
+          </header>
+          <p class="service-desc">An iframe embed.</p>
+
+          <div class="embed">
+            <iframe
+              id="youtube-frame"
+              src="https://www.youtube.com/embed/jNQXAC9IVRw"
+              title="YouTube video player"
+              allow="
+                accelerometer;
+                autoplay;
+                clipboard-write;
+                encrypted-media;
+                gyroscope;
+                picture-in-picture;
+              "
+              allowfullscreen
+            ></iframe>
+          </div>
+
+          <dl class="look-for">
+            <dt>Cookies</dt>
+            <dd>Third-party, set on <code>youtube.com</code></dd>
+            <dt>Requests</dt>
+            <dd>
+              <code>youtube.com/embed</code>,
+              <code>youtube-nocookie.com/embed</code>
+            </dd>
+          </dl>
+        </section>
+
+        <section class="service" id="maps" data-service="Google Maps">
+          <header class="service-head">
+            <h2>Google Maps</h2>
+            <span class="status" data-status="idle">Not loaded</span>
+          </header>
+          <p class="service-desc">
+            An iframe embed that needs no API key, which makes it easy to test.
+          </p>
+
+          <div class="embed">
+            <iframe
+              id="maps-frame"
+              src="https://www.google.com/maps?q=Munich&output=embed"
+              title="Google Maps"
+              referrerpolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
+
+          <dl class="look-for">
+            <dt>Cookies</dt>
+            <dd>Third-party, set on <code>google.com</code></dd>
+            <dt>Requests</dt>
+            <dd><code>google.com/maps</code></dd>
+          </dl>
+        </section>
+
+        <section class="service" id="vimeo" data-service="Vimeo">
+          <header class="service-head">
+            <h2>Vimeo</h2>
+            <span class="status" data-status="idle">Not loaded</span>
+          </header>
+          <p class="service-desc">
+            Another video iframe, with its own cookie and storage behaviour.
+          </p>
+
+          <div class="embed">
+            <iframe
+              id="vimeo-frame"
+              src="https://player.vimeo.com/video/76979871"
+              title="Vimeo video player"
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+
+          <dl class="look-for">
+            <dt>Storage</dt>
+            <dd>Cookies and local storage on <code>vimeo.com</code></dd>
+            <dt>Requests</dt>
+            <dd><code>player.vimeo.com/video</code></dd>
+          </dl>
+        </section>
+
+        <section class="service" id="hotjar" data-service="Hotjar">
+          <header class="service-head">
+            <h2>Hotjar</h2>
+            <span class="status" data-status="idle">Not loaded</span>
+          </header>
+          <p class="service-desc">
+            Session recording and heatmaps. Writes a lot of cookies and storage
+            entries.
+          </p>
+
+          <script id="hotjar-snippet">
+            (function (h, o, t, j, a, r) {
+              h.hj =
+                h.hj ||
+                function () {
+                  (h.hj.q = h.hj.q || []).push(arguments);
+                };
+              h._hjSettings = { hjid: 0o0, hjsv: 6 };
+              a = o.getElementsByTagName("head")[0];
+              r = o.createElement("script");
+              r.async = 1;
+              r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+              a.appendChild(r);
+            })(
+              window,
+              document,
+              "https://static.hotjar.com/c/hotjar-",
+              ".js?sv=",
+            );
+          </script>
+
+          <div class="slot">
+            No visible output. Filter the Network tab by "hotjar".
+          </div>
+          <dl class="look-for">
+            <dt>Cookies</dt>
+            <dd>
+              <code>_hjSessionUser_&lt;ID&gt;</code>,
+              <code>_hjSession_&lt;ID&gt;</code>
+            </dd>
+            <dt>Requests</dt>
+            <dd>
+              <code>static.hotjar.com</code>, <code>script.hotjar.com</code>
+            </dd>
+          </dl>
+        </section>
+
+        <section
+          class="service"
+          id="linkedin"
+          data-service="LinkedIn Insight Tag"
+        >
+          <header class="service-head">
+            <h2>LinkedIn Insight Tag</h2>
+            <span class="status" data-status="idle">Not loaded</span>
+          </header>
+          <p class="service-desc">
+            Conversion tracking pixel. Sets third-party cookies on LinkedIn's
+            domain.
+          </p>
+
+          <script id="linkedin-config">
+            _linkedin_partner_id = "0000000";
+            window._linkedin_data_partner_ids =
+              window._linkedin_data_partner_ids || [];
+            window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+          </script>
+          <script id="linkedin-loader">
+            (function (l) {
+              if (!l) {
+                window.lintrk = function (a, b) {
+                  window.lintrk.q.push([a, b]);
+                };
+                window.lintrk.q = [];
+              }
+              var s = document.getElementsByTagName("script")[0];
+              var b = document.createElement("script");
+              b.type = "text/javascript";
+              b.async = true;
+              b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+              s.parentNode.insertBefore(b, s);
+            })(window.lintrk);
+          </script>
+
+          <div class="slot">
+            No visible output. Filter the Network tab by "licdn".
+          </div>
+          <dl class="look-for">
+            <dt>Cookies</dt>
+            <dd>
+              Third-party, set on <code>linkedin.com</code> (for example
+              <code>bcookie</code>)
+            </dd>
+            <dt>Requests</dt>
+            <dd>
+              <code>snap.licdn.com/.../insight.min.js</code>,
+              <code>px.ads.linkedin.com</code>
+            </dd>
+          </dl>
+        </section>
+
+        <footer class="page-foot">
+          usertesting · for consent-management testing only
+        </footer>
+      </main>
+    </div>
+    <script src="main.js" defer></script>
+  </body>
+</html>
