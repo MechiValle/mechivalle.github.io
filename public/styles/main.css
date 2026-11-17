@@ -270,3 +270,141 @@ h1 {
     margin-bottom: 0.6rem;
   }
 }
+
+.panel {
+  margin-top: 1.5rem;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.panel-head h3 {
+  margin: 0;
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.count {
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.btn {
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.2rem 0.7rem;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.table-wrap {
+  max-height: 14rem;
+  overflow: auto;
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.table-wrap th {
+  position: sticky;
+  top: 0;
+  padding: 0.4rem 0.75rem 0.4rem 0;
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule-soft);
+  text-align: left;
+  font-weight: 600;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.table-wrap td {
+  padding: 0.35rem 0.75rem 0.35rem 0;
+  border-bottom: 1px solid var(--rule-soft);
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.table-wrap tr:last-child td {
+  border-bottom: 0;
+}
+
+.empty {
+  margin: 0;
+  padding: 0.75rem 0;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+.log {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 18rem;
+  overflow: auto;
+  border-bottom: 1px solid var(--rule-soft);
+  font-family: var(--mono);
+  font-size: 0.78rem;
+}
+
+.log li {
+  display: grid;
+  grid-template-columns: 5.5rem 8rem minmax(0, 1fr);
+  gap: 0.75rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+
+.log li:last-child {
+  border-bottom: 0;
+}
+
+.log time {
+  color: var(--ink-soft);
+}
+
+.log .kind {
+  color: var(--ink-soft);
+}
+
+.log li[data-tone="set"] .kind {
+  color: var(--ok);
+  font-weight: 700;
+}
+
+.log li[data-tone="removed"] .kind {
+  color: var(--block);
+  font-weight: 700;
+}
+
+.log .detail {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 52rem) {
+  .log li {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}

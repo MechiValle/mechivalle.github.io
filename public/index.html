@@ -15,6 +15,7 @@
         </a>
         <nav aria-label="Sections">
           <ol class="toc">
+            <li><a href="#inspector">Storage inspector</a></li>
             <li><a href="#ga4">Google Analytics 4</a></li>
             <li><a href="#gtm">Google Tag Manager</a></li>
             <li><a href="#meta-pixel">Meta Pixel</a></li>
@@ -35,42 +36,58 @@
           </p>
         </header>
 
-        <section class="service" id="ga4" data-service="Google Analytics 4">
-          <header class="service-head">
-            <h2>Google Analytics 4</h2>
-            <span class="status" data-status="idle">Not loaded</span>
-          </header>
+        <section class="inspector" id="inspector">
+          <h2 class="section-title">Storage inspector</h2>
           <p class="service-desc">
-            Page-view and event measurement. The classic first-party cookie
-            case.
+            Cookies readable by scripts on this origin, localStorage,
+            sessionStorage, and a log of changes and requests to other domains.
+            Cookies set by iframes on their own domains and HttpOnly cookies are
+            not exposed to page scripts.
           </p>
 
-          <script
-            id="ga4-loader"
-            async
-            src="https://www.googletagmanager.com/gtag/js?id=G-EPPFS2MB4T"
-          ></script>
-          <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() {
-              dataLayer.push(arguments);
-            }
-            gtag("js", new Date());
-            gtag("config", "G-EPPFS2MB4T");
-          </script>
-
-          <div class="slot">
-            No visible output. Filter the Network tab by "collect".
+          <div class="panel">
+            <div class="panel-head">
+              <h3>Cookies</h3>
+              <span class="count" data-count="cookies">0</span>
+              <button type="button" class="btn" data-action="clear-cookies">
+                Clear
+              </button>
+            </div>
+            <div class="table-wrap" data-table="cookies"></div>
           </div>
-          <dl class="look-for">
-            <dt>Cookies</dt>
-            <dd><code>_ga</code>, <code>_ga_&lt;MEASUREMENT_ID&gt;</code></dd>
-            <dt>Requests</dt>
-            <dd>
-              <code>googletagmanager.com/gtag/js</code>,
-              <code>google-analytics.com/g/collect</code>
-            </dd>
-          </dl>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h3>localStorage</h3>
+              <span class="count" data-count="local">0</span>
+              <button type="button" class="btn" data-action="clear-local">
+                Clear
+              </button>
+            </div>
+            <div class="table-wrap" data-table="local"></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h3>sessionStorage</h3>
+              <span class="count" data-count="session">0</span>
+              <button type="button" class="btn" data-action="clear-session">
+                Clear
+              </button>
+            </div>
+            <div class="table-wrap" data-table="session"></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h3>Event log</h3>
+              <span class="count" data-count="log">0</span>
+              <button type="button" class="btn" data-action="clear-log">
+                Clear
+              </button>
+            </div>
+            <ol class="log" id="log"></ol>
+          </div>
         </section>
 
         <section class="service" id="gtm" data-service="Google Tag Manager">
