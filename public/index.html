@@ -40,7 +40,7 @@
 
       <main class="content" id="top">
         <header class="page-head">
-          <h1>Consent test bench</h1>
+          <h1>Consent Test Bench</h1>
           <p class="lede">
             One section per third-party service. Open DevTools (Network,
             Application, Console), switch consent on and off in the banner, and
@@ -198,7 +198,7 @@
           <div class="embed">
             <iframe
               id="youtube-frame"
-              src="https://www.youtube.com/embed/jNQXAC9IVRw"
+              data-src="https://www.youtube.com/embed/jNQXAC9IVRw"
               title="YouTube video player"
               allow="
                 accelerometer;
@@ -208,6 +208,7 @@
                 gyroscope;
                 picture-in-picture;
               "
+              data-usercentrics="Youtube Video"
               allowfullscreen
             ></iframe>
           </div>
@@ -235,9 +236,10 @@
           <div class="embed">
             <iframe
               id="maps-frame"
-              src="https://www.google.com/maps?q=Munich&output=embed"
+              data-src="https://www.google.com/maps?q=Munich&output=embed"
               title="Google Maps"
               referrerpolicy="no-referrer-when-downgrade"
+              data-usercentrics="Google Maps"
             ></iframe>
           </div>
 
@@ -261,9 +263,10 @@
           <div class="embed">
             <iframe
               id="vimeo-frame"
-              src="https://player.vimeo.com/video/76979871"
+              data-src="https://player.vimeo.com/video/76979871"
               title="Vimeo video player"
               allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+              data-usercentrics="Vimeo Video"
             ></iframe>
           </div>
 
