@@ -14,8 +14,7 @@ function requested(urlPart: string): boolean {
 
 function scriptStatus(selector: string, urlPart: string): Status {
   const el = document.querySelector<HTMLScriptElement>(selector);
-  if (!el) return "idle";
-  if (el.type === "text/plain") return "blocked";
+  if (el?.type === "text/plain") return "blocked";
   return requested(urlPart) ? "loaded" : "idle";
 }
 
@@ -325,12 +324,7 @@ function logRequest(rawUrl: string): void {
   logEvent("request", shorten(`${url.host}${url.pathname}`, 120));
 }
 
-const CONSENT_EVENTS = [
-  "UC_UI_INITIALIZED",
-  "UC_UI_CMP_EVENT",
-  "UC_CONSENT",
-  "ucEvent",
-];
+const CONSENT_EVENTS = ["UC_UI_INITIALIZED", "UC_UI_CMP_EVENT", "ucConsent"];
 
 for (const name of CONSENT_EVENTS) {
   window.addEventListener(name, (event) => {
@@ -338,7 +332,7 @@ for (const name of CONSENT_EVENTS) {
       event instanceof CustomEvent && event.detail
         ? JSON.stringify(event.detail)
         : "";
-    logEvent("consent", shorten(detail ? `${name} ${detail}` : name, 160));
+    logEvent("consent", shorten(detail ? `${name} ${detail}` : name, 400));
   });
 }
 
