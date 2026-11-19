@@ -37,7 +37,7 @@ function frameStatus(selector: string): Status {
 }
 
 const checks: Record<string, () => Status> = {
-  ga4: () => scriptStatus("#ga4-loader", "googletagmanager.com/gtag/js"),
+  ga4: () => scriptStatus("#ga4-loader", "/g/collect"),
   gtm: () => scriptStatus("#gtm-snippet", "googletagmanager.com/gtm.js"),
   "meta-pixel": () =>
     scriptStatus("#meta-pixel-snippet", "connect.facebook.net"),
