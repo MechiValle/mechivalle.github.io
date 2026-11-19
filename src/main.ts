@@ -12,16 +12,28 @@ function requested(urlPart: string): boolean {
     .some((entry) => entry.name.includes(urlPart));
 }
 
+// The autoblocker leaves inline snippets alone and blocks the script they
+// inject (or a script tag with a src), marking it with data-uc-hash and
+// type="text/plain". Manual markup (type="text/plain" on the snippet itself)
+// is still recognised through `selector`.
 function scriptStatus(selector: string, urlPart: string): Status {
   const el = document.querySelector<HTMLScriptElement>(selector);
   if (el?.type === "text/plain") return "blocked";
+  const blocked = Array.from(
+    document.querySelectorAll<HTMLScriptElement>(
+      'script[data-uc-hash][type="text/plain"]',
+    ),
+  ).some((script) => script.getAttribute("src")?.includes(urlPart));
+  if (blocked) return "blocked";
   return requested(urlPart) ? "loaded" : "idle";
 }
 
+// The autoblocker moves an iframe's src to data-uc-src until consent is given.
 function frameStatus(selector: string): Status {
   const el = document.querySelector<HTMLIFrameElement>(selector);
   if (!el) return "idle";
-  return el.getAttribute("src") ? "loaded" : "blocked";
+  const src = el.getAttribute("src");
+  return src && src !== "about:blank" ? "loaded" : "blocked";
 }
 
 const checks: Record<string, () => Status> = {

@@ -8,6 +8,7 @@
     <script
       type="application/javascript"
       id="usercentrics-autoblocker"
+      data-debug="true"
       src="https://web.cmp.usercentrics.eu/modules/autoblocker.js"
     ></script>
     <script
@@ -100,6 +101,44 @@
             </div>
             <ol class="log" id="log"></ol>
           </div>
+        </section>
+
+        <section class="service" id="ga4" data-service="Google Analytics 4">
+          <header class="service-head">
+            <h2>Google Analytics 4</h2>
+            <span class="status" data-status="idle">Not loaded</span>
+          </header>
+          <p class="service-desc">
+            Analytics tag loaded directly with gtag.js, with no manual markup,
+            so only the autoblocker decides whether it runs.
+          </p>
+
+          <script
+            id="ga4-loader"
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=G-EPPFS2MB4T"
+          ></script>
+          <script id="ga4-config">
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+              dataLayer.push(arguments);
+            }
+            gtag("js", new Date());
+            gtag("config", "G-EPPFS2MB4T");
+          </script>
+
+          <div class="slot">
+            No visible output. Filter the Network tab by "gtag" or "collect".
+          </div>
+          <dl class="look-for">
+            <dt>Cookies</dt>
+            <dd><code>_ga</code>, <code>_ga_EPPFS2MB4T</code></dd>
+            <dt>Requests</dt>
+            <dd>
+              <code>googletagmanager.com/gtag/js</code>,
+              <code>google-analytics.com/g/collect</code>
+            </dd>
+          </dl>
         </section>
 
         <section class="service" id="gtm" data-service="Google Tag Manager">
@@ -198,7 +237,7 @@
           <div class="embed">
             <iframe
               id="youtube-frame"
-              data-src="https://www.youtube.com/embed/jNQXAC9IVRw"
+              src="https://www.youtube.com/embed/jNQXAC9IVRw"
               title="YouTube video player"
               allow="
                 accelerometer;
@@ -208,7 +247,6 @@
                 gyroscope;
                 picture-in-picture;
               "
-              data-usercentrics="Youtube Video"
               allowfullscreen
             ></iframe>
           </div>
@@ -236,10 +274,9 @@
           <div class="embed">
             <iframe
               id="maps-frame"
-              data-src="https://www.google.com/maps?q=Munich&output=embed"
+              src="https://www.google.com/maps?q=Munich&output=embed"
               title="Google Maps"
               referrerpolicy="no-referrer-when-downgrade"
-              data-usercentrics="Google Maps"
             ></iframe>
           </div>
 
@@ -263,10 +300,9 @@
           <div class="embed">
             <iframe
               id="vimeo-frame"
-              data-src="https://player.vimeo.com/video/76979871"
+              src="https://player.vimeo.com/video/76979871"
               title="Vimeo video player"
               allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
-              data-usercentrics="Vimeo Video"
             ></iframe>
           </div>
 
