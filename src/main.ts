@@ -36,9 +36,26 @@ function frameStatus(selector: string): Status {
   return src && src !== "about:blank" ? "loaded" : "blocked";
 }
 
+const GA4_ID = "G-EPPFS2MB4T";
+
+const gtmStatus = (): Status =>
+  scriptStatus("#gtm-snippet", "googletagmanager.com/gtm.js");
+
+// GA4 is sent by a Google tag inside GTM, so there is no script of its own to
+// inspect. Its beacons do not reliably show up in Resource Timing, so a
+// request OR the _ga_<id> cookie counts as running. If GTM itself is blocked,
+// GA4 is blocked with it.
+function ga4Status(): Status {
+  const cookie = `_ga_${GA4_ID.replace("G-", "")}=`;
+  if (requested("/g/collect") || document.cookie.includes(cookie)) {
+    return "loaded";
+  }
+  return gtmStatus() === "blocked" ? "blocked" : "idle";
+}
+
 const checks: Record<string, () => Status> = {
-  ga4: () => scriptStatus("#ga4-loader", "/g/collect"),
-  gtm: () => scriptStatus("#gtm-snippet", "googletagmanager.com/gtm.js"),
+  ga4: ga4Status,
+  gtm: gtmStatus,
   "meta-pixel": () =>
     scriptStatus("#meta-pixel-snippet", "connect.facebook.net"),
   youtube: () => frameStatus("#youtube-frame"),
@@ -275,6 +292,7 @@ async function refreshPanel(panel: Panel): Promise<void> {
 
 async function refreshAll(): Promise<void> {
   await Promise.all(panels.map(refreshPanel));
+  renderStatus();
 }
 
 async function clearCookies(): Promise<void> {
