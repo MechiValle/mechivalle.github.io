@@ -108,23 +108,10 @@
             <span class="status" data-status="idle">Not loaded</span>
           </header>
           <p class="service-desc">
-            Analytics tag loaded directly with gtag.js, with no manual markup,
-            so only the autoblocker decides whether it runs.
+            Analytics tag deployed through Google Tag Manager (Google tag
+            G-EPPFS2MB4T). There is no gtag.js snippet on this page: GTM injects
+            it, so it only runs when the container is allowed to load.
           </p>
-
-          <script
-            id="ga4-loader"
-            async
-            src="https://www.googletagmanager.com/gtag/js?id=G-EPPFS2MB4T"
-          ></script>
-          <script id="ga4-config">
-            window.dataLayer = window.dataLayer || [];
-            function gtag() {
-              dataLayer.push(arguments);
-            }
-            gtag("js", new Date());
-            gtag("config", "G-EPPFS2MB4T");
-          </script>
 
           <div class="slot">
             No visible output. Filter the Network tab by "gtag" or "collect".
