@@ -46,11 +46,14 @@ const gtmStatus = (): Status =>
 // request OR the _ga_<id> cookie counts as running. If GTM itself is blocked,
 // GA4 is blocked with it.
 function ga4Status(): Status {
+  // A blocked container cannot run GA4, whatever cookies are left over from an
+  // earlier consent choice.
+  if (gtmStatus() === "blocked") return "blocked";
   const cookie = `_ga_${GA4_ID.replace("G-", "")}=`;
   if (requested("/g/collect") || document.cookie.includes(cookie)) {
     return "loaded";
   }
-  return gtmStatus() === "blocked" ? "blocked" : "idle";
+  return "idle";
 }
 
 const checks: Record<string, () => Status> = {
