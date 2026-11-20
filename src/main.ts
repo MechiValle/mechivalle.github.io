@@ -59,8 +59,11 @@ function ga4Status(): Status {
 const checks: Record<string, () => Status> = {
   ga4: ga4Status,
   gtm: gtmStatus,
+  // Injected by a GTM Custom HTML tag: blocked whenever GTM itself is blocked.
   "meta-pixel": () =>
-    scriptStatus("#meta-pixel-snippet", "connect.facebook.net"),
+    gtmStatus() === "blocked"
+      ? "blocked"
+      : scriptStatus("#meta-pixel-snippet", "connect.facebook.net"),
   youtube: () => frameStatus("#youtube-frame"),
   maps: () => frameStatus("#maps-frame"),
   vimeo: () => frameStatus("#vimeo-frame"),
