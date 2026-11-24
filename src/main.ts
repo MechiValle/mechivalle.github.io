@@ -108,8 +108,10 @@ interface CookieJar {
 
 const jar = (window as unknown as { cookieStore?: CookieJar }).cookieStore;
 
-const LOG_LIMIT = 200;
+const LOG_LIMIT = 500;
 const VALUE_LIMIT = 48;
+// The page shows a shortened detail; the CSV export gets the full text.
+const DETAIL_DISPLAY_LIMIT = 400;
 
 function shorten(text: string, limit: number): string {
   return text.length > limit ? `${text.slice(0, limit)}…` : text;
@@ -129,7 +131,8 @@ function logEvent(kind: string, detail: string, tone: Tone = "info"): void {
   kindEl.textContent = kind;
   const detailEl = document.createElement("span");
   detailEl.className = "detail";
-  detailEl.textContent = detail;
+  detailEl.textContent = shorten(detail, DETAIL_DISPLAY_LIMIT);
+  item.dataset.full = detail;
   item.append(time, kindEl, detailEl);
   list.prepend(item);
   while (list.children.length > LOG_LIMIT) list.lastElementChild?.remove();
@@ -340,7 +343,7 @@ async function downloadLog(): Promise<void> {
     .map((item) => [
       item.querySelector("time")?.dateTime ?? "",
       item.querySelector(".kind")?.textContent ?? "",
-      item.querySelector(".detail")?.textContent ?? "",
+      item.dataset.full ?? item.querySelector(".detail")?.textContent ?? "",
       item.dataset.tone ?? "",
     ]);
   const badgeRows = Array.from(
@@ -410,7 +413,7 @@ function logRequest(rawUrl: string): void {
     return;
   }
   if (url.host === location.host) return;
-  logEvent("request", shorten(`${url.host}${url.pathname}`, 120));
+  logEvent("request", `${url.host}${url.pathname}`);
 }
 
 const CONSENT_EVENTS = ["UC_UI_INITIALIZED", "UC_UI_CMP_EVENT", "ucConsent"];
@@ -421,7 +424,7 @@ for (const name of CONSENT_EVENTS) {
       event instanceof CustomEvent && event.detail
         ? JSON.stringify(event.detail)
         : "";
-    logEvent("consent", shorten(detail ? `${name} ${detail}` : name, 400));
+    logEvent("consent", detail ? `${name} ${detail}` : name);
   });
 }
 
@@ -437,7 +440,7 @@ function describeDataLayerItem(item: unknown): string {
       ? Array.from(item as ArrayLike<unknown>)
       : item;
   try {
-    return shorten(JSON.stringify(value) ?? String(value), 400);
+    return JSON.stringify(value) ?? String(value);
   } catch {
     return String(value);
   }
