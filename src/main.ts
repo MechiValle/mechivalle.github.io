@@ -372,6 +372,39 @@ for (const name of CONSENT_EVENTS) {
   });
 }
 
+// Everything pushed to the dataLayer (Usercentrics consent signals, gtag()
+// calls, GTM's own events) shows up in the event log. gtag() pushes
+// `arguments` objects, so array-likes are converted before printing.
+function describeDataLayerItem(item: unknown): string {
+  const value =
+    item !== null &&
+    typeof item === "object" &&
+    !Array.isArray(item) &&
+    "length" in item
+      ? Array.from(item as ArrayLike<unknown>)
+      : item;
+  try {
+    return shorten(JSON.stringify(value) ?? String(value), 400);
+  } catch {
+    return String(value);
+  }
+}
+
+function watchDataLayer(): void {
+  const scope = window as unknown as Record<string, unknown[] | undefined>;
+  const layer = (scope.dataLayer ??= []);
+  for (const item of layer) logEvent("dataLayer", describeDataLayerItem(item));
+  const push = layer.push.bind(layer);
+  layer.push = (...items: unknown[]) => {
+    for (const item of items) {
+      logEvent("dataLayer", describeDataLayerItem(item));
+    }
+    return push(...items);
+  };
+}
+
+watchDataLayer();
+
 new PerformanceObserver((list) => {
   for (const entry of list.getEntries()) logRequest(entry.name);
   renderStatus();
