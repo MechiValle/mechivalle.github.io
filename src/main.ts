@@ -327,6 +327,114 @@ async function clearCookies(): Promise<void> {
   await refreshAll();
 }
 
+// Usercentrics does not remove cookies that a service already wrote before the
+// visitor withdrew consent, so the test bench does it. For every denied service
+// below, its known cookies are deleted. Only first-party cookies written by
+// scripts are listed: cookies set by iframes on their own domains cannot be
+// reached from page code.
+interface CookieRule {
+  service: string;
+  matches: (name: string) => boolean;
+}
+
+const COOKIE_RULES: CookieRule[] = [
+  {
+    service: "Google Analytics",
+    matches: (name) =>
+      name === "_ga" ||
+      name.startsWith("_ga_") ||
+      name === "_gid" ||
+      name.startsWith("_gat"),
+  },
+  {
+    service: "Facebook Pixel",
+    matches: (name) => name === "_fbp" || name === "_fbc",
+  },
+];
+
+async function deleteCookies(
+  matches: (name: string) => boolean,
+): Promise<string[]> {
+  const deleted: string[] = [];
+  if (jar) {
+    const all = await jar.getAll();
+    await Promise.all(
+      all
+        .filter((c) => matches(c.name))
+        .map((c) => {
+          deleted.push(c.name);
+          return jar.delete({
+            name: c.name,
+            path: c.path,
+            ...(c.domain ? { domain: c.domain } : {}),
+          });
+        }),
+    );
+  } else {
+    for (const pair of document.cookie.split("; ").filter(Boolean)) {
+      const name = pair.split("=")[0];
+      if (!matches(name)) continue;
+      deleted.push(name);
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+    }
+  }
+  return deleted;
+}
+
+// `consent` maps a service name to true/false. Services that are missing from
+// it are left alone, so nothing is deleted before the visitor has chosen.
+async function cleanupDeniedCookies(
+  consent: Record<string, boolean>,
+): Promise<void> {
+  for (const rule of COOKIE_RULES) {
+    if (consent[rule.service] !== false) continue;
+    const deleted = await deleteCookies(rule.matches);
+    if (deleted.length > 0) {
+      logEvent(
+        "cleanup",
+        `deleted ${deleted.join(", ")} because ${rule.service} is denied`,
+        "removed",
+      );
+    }
+  }
+  await refreshAll();
+}
+
+interface StoredService {
+  name?: string;
+  consent?: boolean;
+}
+
+// The choice saved by Usercentrics on an earlier visit (V3 keeps it in
+// localStorage.ucData, with one entry per service).
+function storedConsent(): Record<string, boolean> {
+  try {
+    const data = JSON.parse(localStorage.getItem("ucData") ?? "{}") as {
+      consent?: { services?: Record<string, StoredService> };
+    };
+    const result: Record<string, boolean> = {};
+    for (const service of Object.values(data.consent?.services ?? {})) {
+      if (service.name && typeof service.consent === "boolean") {
+        result[service.name] = service.consent;
+      }
+    }
+    return result;
+  } catch {
+    return {};
+  }
+}
+
+// The ucConsent event carries one true/false entry per service name.
+function consentFromEvent(detail: unknown): Record<string, boolean> {
+  const result: Record<string, boolean> = {};
+  if (detail !== null && typeof detail === "object") {
+    for (const [key, value] of Object.entries(detail)) {
+      if (typeof value === "boolean") result[key] = value;
+    }
+  }
+  return result;
+}
+
 function csvCell(value: string): string {
   return `"${value.replaceAll('"', '""')}"`;
 }
@@ -425,6 +533,9 @@ for (const name of CONSENT_EVENTS) {
         ? JSON.stringify(event.detail)
         : "";
     logEvent("consent", detail ? `${name} ${detail}` : name);
+    if (name === "ucConsent" && event instanceof CustomEvent) {
+      void cleanupDeniedCookies(consentFromEvent(event.detail));
+    }
   });
 }
 
@@ -460,6 +571,9 @@ function watchDataLayer(): void {
 }
 
 watchDataLayer();
+
+// A visitor who denied on an earlier visit: remove what an earlier consent left.
+void cleanupDeniedCookies(storedConsent());
 
 new PerformanceObserver((list) => {
   for (const entry of list.getEntries()) logRequest(entry.name);
