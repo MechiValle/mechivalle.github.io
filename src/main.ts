@@ -121,7 +121,9 @@ function logEvent(kind: string, detail: string, tone: Tone = "info"): void {
   const item = document.createElement("li");
   item.dataset.tone = tone;
   const time = document.createElement("time");
-  time.textContent = new Date().toLocaleTimeString("en-GB");
+  const now = new Date();
+  time.textContent = now.toLocaleTimeString("en-GB");
+  time.dateTime = now.toISOString();
   const kindEl = document.createElement("span");
   kindEl.className = "kind";
   kindEl.textContent = kind;
@@ -322,7 +324,58 @@ async function clearCookies(): Promise<void> {
   await refreshAll();
 }
 
+function csvCell(value: string): string {
+  return `"${value.replaceAll('"', '""')}"`;
+}
+
+// Exports the event log (oldest first) plus a snapshot taken at download
+// time: the status badge of every service and the names of the cookies
+// currently set. Cookie values are left out on purpose.
+async function downloadLog(): Promise<void> {
+  const now = new Date().toISOString();
+  const logRows = Array.from(
+    document.querySelectorAll<HTMLLIElement>("#log li"),
+  )
+    .reverse()
+    .map((item) => [
+      item.querySelector("time")?.dateTime ?? "",
+      item.querySelector(".kind")?.textContent ?? "",
+      item.querySelector(".detail")?.textContent ?? "",
+      item.dataset.tone ?? "",
+    ]);
+  const badgeRows = Array.from(
+    document.querySelectorAll<HTMLElement>(".service[id] .status"),
+  ).map((el) => [
+    now,
+    "snapshot-badge",
+    `${el.closest(".service")?.id}: ${el.textContent}`,
+    "",
+  ]);
+  const cookieRows = (await readCookies()).map((entry) => [
+    now,
+    "snapshot-cookie",
+    entry.cells[0],
+    "",
+  ]);
+  const csv = [
+    ["timestamp", "kind", "detail", "tone"],
+    ...logRows,
+    ...badgeRows,
+    ...cookieRows,
+  ]
+    .map((row) => row.map(csvCell).join(","))
+    .join("\r\n");
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(
+    new Blob(["﻿", csv], { type: "text/csv;charset=utf-8" }),
+  );
+  link.download = `event-log-${now.slice(0, 19).replace(/[:T]/g, "-")}.csv`;
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
 const actions: Record<string, () => Promise<void> | void> = {
+  "download-log": downloadLog,
   "clear-cookies": clearCookies,
   "clear-local": () => {
     localStorage.clear();
